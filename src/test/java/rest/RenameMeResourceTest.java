@@ -1,6 +1,14 @@
 package rest;
 
+import com.nimbusds.jose.shaded.json.JSONObject;
+import dto.UserPlanetDTO;
+import entities.Address;
+import entities.Fee;
 import entities.RenameMe;
+import entities.Role;
+import entities.SwimStyle;
+import entities.User;
+import facades.UserFacade;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -32,6 +40,13 @@ public class RenameMeResourceTest {
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
+    private static UserFacade facade;
+    private static User user1;
+    private static User user2;
+    private static Role userRole;
+    private static Role adminRole;
+    private static User admin;
+    private static User both;
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -49,6 +64,68 @@ public class RenameMeResourceTest {
         RestAssured.baseURI = SERVER_URL;
         RestAssured.port = SERVER_PORT;
         RestAssured.defaultParser = Parser.JSON;
+        
+        facade = UserFacade.getUserFacade(emf);
+        EntityManager em = emf.createEntityManager();
+
+        user1 = new User("Sebastian", "testuser1");
+        user2 = new User("Sumit", "testuser2");
+
+        Address a1 = new Address("Christian X's Allé");
+        Address a2 = new Address("Taastrup Gade");
+
+        Fee f1 = new Fee("100");
+        Fee f2 = new Fee("200");
+
+        SwimStyle ss1 = new SwimStyle("crawl");
+        SwimStyle ss2 = new SwimStyle("butterfly");
+
+        user1.setAddress(a1);
+        user2.setAddress(a2);
+
+        user1.addFees(f1);
+        user2.addFees(f2);
+
+        user1.addSwimStyle(ss1);
+        user2.addSwimStyle(ss2);
+
+        userRole = new Role("user");
+        adminRole = new Role("admin");
+
+        user1.addRole(userRole);
+        user2.addRole(userRole);
+
+        admin = new User("admin", "test");
+        admin.addRole(adminRole);
+
+        both = new User("user_admin", "test");
+        both.addRole(userRole);
+        both.addRole(adminRole);
+
+        try {
+            em.getTransaction().begin();
+
+            //Delete existing users and roles to get a "fresh" database
+            em.createNativeQuery("delete from FEE").executeUpdate();
+            em.createNativeQuery("delete from user_roles").executeUpdate();
+            em.createNativeQuery("delete from roles").executeUpdate();
+            em.createNativeQuery("delete from SWIMSTYLE_users").executeUpdate();
+            em.createNativeQuery("delete from SWIMSTYLE").executeUpdate();
+            em.createNativeQuery("delete from users").executeUpdate();
+
+            //Persisting new data
+            em.persist(userRole);
+            em.persist(adminRole);
+            em.persist(user1);
+            em.persist(user2);
+            em.persist(admin);
+            em.persist(both);
+
+            em.getTransaction().commit();
+
+        } finally {
+            em.close();
+        }
     }
 
     @AfterAll
@@ -62,21 +139,10 @@ public class RenameMeResourceTest {
 
     // Setup the DataBase (used by the test-server and this test) in a known state BEFORE EACH TEST
     //TODO -- Make sure to change the EntityClass used below to use YOUR OWN (renamed) Entity class
-//    @BeforeEach
-//    public void setUp() {
-//        EntityManager em = emf.createEntityManager();
-//        r1 = new RenameMe("Some txt", "More text");
-//        r2 = new RenameMe("aaa", "bbb");
-//        try {
-//            em.getTransaction().begin();
-//            em.createNamedQuery("RenameMe.deleteAllRows").executeUpdate();
-//            em.persist(r1);
-//            em.persist(r2);
-//            em.getTransaction().commit();
-//        } finally {
-//            em.close();
-//        }
-//    }
+    @BeforeEach
+    public void setUp() {
+        
+    }
 
     @Test
     public void testServerIsUp() {
@@ -96,7 +162,6 @@ public class RenameMeResourceTest {
 
     @Disabled
     @Test
-    @Order(1)
     public void testParrallel() throws Exception {
         given()
                 .contentType("application/json")
@@ -109,16 +174,14 @@ public class RenameMeResourceTest {
                 .body("starshipName", equalTo("Star Destroyer"))
                 .body("vehicleName", equalTo("Sand Crawler"));
 
- 
     }
-    
+
     @Disabled
     @Test
-    @Order(2)
     public void testCached() throws Exception {
         given()
                 .contentType("application/json")
-                .get("/info/cached").then()            
+                .get("/info/cached").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("peopleName", equalTo("Luke Skywalker"))
@@ -126,5 +189,25 @@ public class RenameMeResourceTest {
                 .body("speciesName", equalTo("Ewok"))
                 .body("starshipName", equalTo("Star Destroyer"))
                 .body("vehicleName", equalTo("Sand Crawler"));
+    }
+
+    @Test
+    public void testAddPlanetToUser() throws Exception {
+        JSONObject request = new JSONObject();
+        request.put("userName", "Sebastian");
+        request.put("planetName", "Tattooine");
+        request.put("planetClimate", "arid");
+        request.put("planetTerrain", "desert");
+        request.put("planetPopulation", "200000");
+
+        given()
+                .contentType("application/json")
+                .body(request.toJSONString())
+                .when()
+                .put("/info/addPlanetToUser")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode());
+
     }
 }
