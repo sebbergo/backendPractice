@@ -10,21 +10,10 @@ package dto;
  * @author sebas
  */
 public class JokeDTO {
-    
-    private String joke;
 
-    public JokeDTO() {
-    }
+    public String joke;
 
     public JokeDTO(String joke, String specificId) {
-        this.joke = joke;
-    }
-
-    public String getJoke() {
-        return joke;
-    }
-
-    public void setJoke(String joke) {
         this.joke = joke;
     }
 

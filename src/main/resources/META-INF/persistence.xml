@@ -6,6 +6,11 @@
     <!--    <class>entities.RenameMe</class>-->
     <class>entities.Role</class>
     <class>entities.User</class>
+    <class>entities.Address</class>
+    <class>entities.Fee</class>
+    <class>entities.Joke</class>
+    <class>entities.RenameMe</class>
+    <class>entities.SwimStyle</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <!-- DO NOT remove the line below. It's not set by the  entityUtils.EMF_Creator -->
@@ -20,7 +25,7 @@
       <property name="eclipselink.logging.level.sql" value="INFO"/>
       <property name="eclipselink.logging.parameters" value="true"/>
       <!-- In PRODUCTION the values below, will be overriden by utils.EMF_Creator -->
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/startcode"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/startcode?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
       <property name="javax.persistence.jdbc.user" value="dev"/>
       <property name="javax.persistence.jdbc.password" value="ax2"/>
     </properties>
@@ -29,12 +34,18 @@
   <persistence-unit name="puTest" transaction-type="RESOURCE_LOCAL">
     <!-- DO NOT RENAME THE PERSISTENCE UNIT -->
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <!--            <class>entities.RenameMe</class>-->
+    <class>entities.Role</class>
+    <class>entities.User</class>
+    <class>entities.Address</class>
+    <class>entities.Fee</class>
+    <class>entities.Joke</class>
+    <class>entities.RenameMe</class>
+    <class>entities.SwimStyle</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
       <property name="eclipselink.canonicalmodel.subpackage" value="ghy636765"/>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/startcode_test"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/startcode_test?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
       <property name="javax.persistence.jdbc.user" value="dev"/>
       <property name="javax.persistence.jdbc.password" value="ax2"/>
       <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>

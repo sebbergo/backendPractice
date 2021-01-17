@@ -1,11 +1,13 @@
 package dto;
 
+import entities.Planet;
+
 public class PlanetDTO {
 
-    private String name;
-    private String climate;
-    private String terrain;
-    private String population;
+    public String name;
+    public String climate;
+    public String terrain;
+    public String population;
 
     public PlanetDTO(String name, String climate, String terrain, String population) {
         this.name = name;
@@ -13,37 +15,12 @@ public class PlanetDTO {
         this.terrain = terrain;
         this.population = population;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getClimate() {
-        return climate;
-    }
-
-    public void setClimate(String climate) {
-        this.climate = climate;
-    }
-
-    public String getTerrain() {
-        return terrain;
-    }
-
-    public void setTerrain(String terrain) {
-        this.terrain = terrain;
-    }
-
-    public String getPopulation() {
-        return population;
-    }
-
-    public void setPopulation(String population) {
-        this.population = population;
+    
+    public PlanetDTO(Planet planet){
+        this.name = planet.getName();
+        this.climate = planet.getClimate();
+        this.terrain = planet.getTerrain();
+        this.population = planet.getPopulation();
     }
 
 }

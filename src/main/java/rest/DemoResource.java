@@ -3,6 +3,8 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.JokeDTO;
+import dto.PlanetDTO;
+import dto.UserPlanetDTO;
 import entities.Joke;
 import entities.User;
 import facades.FacadeExample;
@@ -17,11 +19,13 @@ import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
@@ -142,8 +146,21 @@ public class DemoResource {
     @Produces ({MediaType.APPLICATION_JSON})
     public String storeJoke() {
         JokeDTO jokeDTO = GSON.fromJson(cachedResponse, JokeDTO.class);
-        FACADE.storeJoke(jokeDTO.getJoke());
+        FACADE.storeJoke(jokeDTO.joke);
         
         return GSON.toJson(jokeDTO);
+    }
+    
+    @Path("addPlanetToUser")
+    @PUT
+    @Produces ({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String addPlanetToUser(String userPlanetDTO){
+        System.out.println(userPlanetDTO);
+        UserPlanetDTO userPlanetDTOResult = GSON.fromJson(userPlanetDTO, UserPlanetDTO.class);
+        System.out.println(userPlanetDTOResult);
+        FACADE.addPlanetToUser(userPlanetDTOResult);
+        
+        return GSON.toJson(userPlanetDTOResult);
     }
 }

@@ -11,17 +11,9 @@ package dto;
  */
 public class PlanetsDTO {
     
-    private Object[] results;
+    public Object[] results;
 
     public PlanetsDTO(Object[] results) {
-        this.results = results;
-    }
-
-    public Object[] getResults() {
-        return results;
-    }
-
-    public void setResults(Object[] results) {
         this.results = results;
     }
 
